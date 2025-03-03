@@ -15,31 +15,30 @@ import jakarta.persistence.criteria.Predicate;
 @Component
 public class TaskSpecification {
 
-	public Specification<Task> filter(final TaskFilterDTO filter) {
-		return (root, query, cb) -> {
-			final List<Predicate> predicates = new ArrayList<>();
+    public Specification<Task> filter(final TaskFilterDTO filter, final String userIdentifier) {
+	return (root, query, cb) -> {
+	    final List<Predicate> predicates = new ArrayList<>();
 
-			if (isNotBlank(filter.taskIdentifier())) {
-				predicates.add(cb.equal(root.get("identifier"), filter.taskIdentifier()));
-			}
+	    if (isNotBlank(filter.taskIdentifier())) {
+		predicates.add(cb.equal(root.get("identifier"), filter.taskIdentifier()));
+	    }
 
-			if (isNotBlank(filter.title())) {
-				predicates.add(cb.like(root.get("title"), "%" + filter.title() + "%"));
-			}
+	    if (isNotBlank(filter.title())) {
+		predicates.add(cb.like(root.get("title"), "%" + filter.title() + "%"));
+	    }
 
-			if (filter.status() != null) {
-				predicates.add(cb.equal(root.get("status"), filter.status()));
-			}
+	    if (filter.status() != null) {
+		predicates.add(cb.equal(root.get("status"), filter.status()));
+	    }
 
-			if (filter.createdOn() != null) {
-				predicates.add(cb.equal(root.get("createdOn"), filter.createdOn()));
-			}
+	    if (filter.createdOn() != null) {
+		predicates.add(cb.equal(root.get("createdOn"), filter.createdOn()));
+	    }
 
-			if (isNotBlank(filter.userIdentifier())) {
-				predicates.add(cb.equal(root.get("assignedTo").get("identifier"), filter.userIdentifier()));
-			}
+	    predicates.add(cb.equal(root.get("deleted"), false));
+	    predicates.add(cb.equal(root.get("assignedTo").get("identifier"), userIdentifier));
 
-			return cb.and(predicates.toArray(new Predicate[0]));
-		};
-	}
+	    return cb.and(predicates.toArray(new Predicate[0]));
+	};
+    }
 }

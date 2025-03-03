@@ -10,6 +10,12 @@ import br.beehome.beetasky.dto.core.ApiResponse;
 
 public interface TaskService {
 
-	public ApiResponse<List<TaskDTO>> listAllTasks(TaskFilterDTO userFilter, Pageable pageable);
-	
+    public ApiResponse<List<TaskDTO>> listAllTasksByUser(String loggedUser, TaskFilterDTO userFilter, Pageable pageable);
+
+    public ApiResponse<TaskDTO> createTask(String loggedUser, TaskDTO taskDTO);
+
+    public ApiResponse<TaskDTO> updateTask(String loggedUser, String taskIdentifier, TaskDTO taskDTO);
+
+    public ApiResponse<Void> deleteTaskByIdentifier(String loggedUser, String identifier);
+
 }

@@ -2,6 +2,7 @@ package br.beehome.beetasky.exception.core;
 
 import org.springframework.http.HttpStatus;
 
+import br.beehome.beetasky.exception.ExceptionMessageKeyEnum;
 import lombok.Getter;
 
 @Getter

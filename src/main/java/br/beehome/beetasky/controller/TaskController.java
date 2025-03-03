@@ -4,8 +4,14 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,9 +31,34 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TaskDTO>>> findAll(@ModelAttribute TaskFilterDTO filter, Pageable pageable) {
-	ApiResponse<List<TaskDTO>> tasks = taskService.listAllTasks(filter, pageable);
-
+    public ResponseEntity<ApiResponse<List<TaskDTO>>> listAll(@ModelAttribute TaskFilterDTO filter, Authentication authentication, Pageable pageable) {
+	ApiResponse<List<TaskDTO>> tasks = taskService.listAllTasksByUser(authentication.getName(), filter, pageable);
 	return new ResponseEntity<>(tasks, tasks.getStatus());
+    }
+    
+    @PostMapping
+    public ResponseEntity<ApiResponse<TaskDTO>> createTask(@RequestBody TaskDTO taskDTO, Authentication authentication) {
+        
+	ApiResponse<TaskDTO> task = taskService.createTask(authentication.getName(), taskDTO);
+	return new ResponseEntity<>(task, task.getStatus());
+    }
+    
+    @PutMapping("/{identifier}")
+    public ResponseEntity<ApiResponse<TaskDTO>> updateTask(@PathVariable String identifier, @RequestBody TaskDTO taskDTO,
+	    Authentication authentication) {
+
+	ApiResponse<TaskDTO> response = taskService.updateTask(authentication.getName(), identifier, taskDTO);
+
+	return new ResponseEntity<>(response, response.getStatus());
+    }
+    
+    @DeleteMapping("/{identifier}")
+    public ResponseEntity<ApiResponse<Void>> deleteTask(
+            @PathVariable String identifier,
+            Authentication authentication) {
+
+        ApiResponse<Void> response = taskService.deleteTaskByIdentifier(authentication.getName(), identifier);
+
+        return new ResponseEntity<>(response, response.getStatus());
     }
 }

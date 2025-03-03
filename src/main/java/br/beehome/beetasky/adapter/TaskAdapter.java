@@ -1,9 +1,12 @@
 package br.beehome.beetasky.adapter;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import br.beehome.beetasky.dto.TaskDTO;
 import br.beehome.beetasky.entity.Task;
+import br.beehome.beetasky.entity.User;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -27,19 +30,18 @@ public class TaskAdapter {
 		.build();
     }
 
-    public Task toEntity(TaskDTO taskDTO) {
+    public Task toEntity(TaskDTO taskDTO, User user) {
         if (taskDTO == null) {
             return null;
         }
 
         return Task.builder()
-                .identifier(taskDTO.getIdentifier())
+                .identifier(UUID.randomUUID().toString())
                 .title(taskDTO.getTitle())
                 .description(taskDTO.getDescription())
                 .status(taskDTO.getStatus())
-                .createdOn(taskDTO.getCreatedOn())
                 .deadline(taskDTO.getDeadline())
-                .assignedTo(userAdapter.toEntity(taskDTO.getAssignedTo()))
+                .assignedTo(user)
                 .build();
     }
 

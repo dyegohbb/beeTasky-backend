@@ -8,5 +8,5 @@ import lombok.Getter;
 public enum MessageKeyEnum {
 	SUCCESS("success");
 	
-	private String messageCode;
+	private String msg;
 }
