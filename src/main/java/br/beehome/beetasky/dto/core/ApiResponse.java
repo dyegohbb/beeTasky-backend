@@ -37,10 +37,9 @@ public class ApiResponse<T> {
 	this.timestamp = LocalDateTime.now();
     }
 
-    public ApiResponse(String apiVersion, String message, HttpStatus status) {
+    public ApiResponse(String apiVersion, String message) {
 	this.apiVersion = apiVersion;
 	this.message = message;
-	this.status = status;
 	this.timestamp = LocalDateTime.now();
     }
 

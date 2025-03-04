@@ -13,10 +13,6 @@ import br.beehome.beetasky.entity.Task;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
 
-    @Query("SELECT t FROM Task t WHERE t.identifier = :taskIdentifier AND t.assignedTo.identifier = :userIdentifier AND t.deleted = false")
-    Optional<Task> findByTaskIdentifierAndUserIdentifier(@Param("taskIdentifier") String taskIdentifier,
-	    @Param("userIdentifier") String userIdentifier);
-
     boolean existsByTitle(String title);
     
     @Query("SELECT t FROM Task t WHERE t.identifier = :identifier AND t.deleted = false")

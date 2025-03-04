@@ -19,10 +19,9 @@ public enum ExceptionMessageKeyEnum {
     USER_MISSING_CREATE_PARAMETERS("user.missing_create_parameters.error"),
     TASK_NULL("task.null.error"),
     USER_NULL("user.null.error"),
-    TASK_DEADLINE_IN_THE_PAST("task.deadline_in_the_past.error")
-    
-    ;
+    TASK_DEADLINE_IN_THE_PAST("task.deadline_in_the_past.error"),
+    TASK_FILTER_ENDDATE_BEFORE_STARTDATE("task.filter_enddate_before_startdate.error");
 
-    private final String msg;
+    private final String msgCode;
 
 }

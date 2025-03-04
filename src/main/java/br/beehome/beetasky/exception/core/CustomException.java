@@ -12,7 +12,7 @@ public class CustomException extends RuntimeException {
     private final Object[] args;
 
     public CustomException(ExceptionMessageKeyEnum messageKey, HttpStatus status, Object[] args) {
-	super(messageKey.getMsg());
+	super(messageKey.getMsgCode());
 	this.messageKeyEnum = messageKey;
 	this.status = status;
 	this.args = args;

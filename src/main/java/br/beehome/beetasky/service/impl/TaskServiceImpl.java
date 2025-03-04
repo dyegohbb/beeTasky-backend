@@ -21,6 +21,7 @@ import br.beehome.beetasky.entity.User;
 import br.beehome.beetasky.exception.DuplicatedTaskTitleException;
 import br.beehome.beetasky.exception.ForbiddenException;
 import br.beehome.beetasky.exception.TaskDeadlineInThePastException;
+import br.beehome.beetasky.exception.TaskFilterEndDateBeforeStartDate;
 import br.beehome.beetasky.exception.TaskMissingCreateParameters;
 import br.beehome.beetasky.exception.TaskNotFoundException;
 import br.beehome.beetasky.exception.TaskNullException;
@@ -47,6 +48,8 @@ public class TaskServiceImpl implements TaskService {
     public ApiResponse<List<TaskDTO>> listAllTasksByUser(String loggedUser, TaskFilterDTO taskFilter,
             Pageable pageable) {
 
+	validateTaskFilter(taskFilter);
+	
         log.info("[TASK][LIST][{}] Listing tasks for user with filter: {}", loggedUser, taskFilter);
         
         log.info("[TASK][LIST][{}] Retrieving user for list tasks with filter: {}", loggedUser, taskFilter);
@@ -68,6 +71,21 @@ public class TaskServiceImpl implements TaskService {
         return responseAdapter.toSuccess(tasks, MessageKeyEnum.TASK_LISTED, 
                 tasks.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
     }
+
+    private void validateTaskFilter(TaskFilterDTO taskFilter) {
+	if (taskFilter.createdOnStartDate() != null && taskFilter.createdOnEndDate() != null) {
+	    if (taskFilter.createdOnEndDate().isBefore(taskFilter.createdOnStartDate())) {
+		throw new TaskFilterEndDateBeforeStartDate("createdOn");
+	    }
+	}
+
+	if (taskFilter.deadlineStartDate() != null && taskFilter.deadlineEndDate() != null) {
+	    if (taskFilter.deadlineEndDate().isBefore(taskFilter.deadlineStartDate())) {
+		throw new TaskFilterEndDateBeforeStartDate("deadline");
+	    }
+	}
+    }
+
 
     @Override
     public ApiResponse<TaskDTO> createTask(String loggedUser, TaskDTO taskDTO) {
@@ -117,7 +135,7 @@ public class TaskServiceImpl implements TaskService {
 	if(!requiredFieldsMissing.isEmpty()) {
 	    log.info("[TASK][CREATE][{}] Task creation failed for task with {} title - Missing required parameters: {}",
 	            loggedUser, title != null ? title : "missing", requiredFieldsMissing);
-	    throw new TaskMissingCreateParameters(requiredFieldsMissing);
+	    throw new TaskMissingCreateParameters(requiredFieldsMissing.toString());
 	}
     }
     
@@ -148,7 +166,7 @@ public class TaskServiceImpl implements TaskService {
 
 	if (!task.getAssignedTo().getIdentifier().equals(user.getIdentifier())) {
 	    log.warn("[TASK][UPDATE][{}] User is not authorized to update task with identifier {}", loggedUser, taskIdentifier);
-	    throw new ForbiddenException();
+	    throw new ForbiddenException("Update task with identifier: " + taskIdentifier);
 	}
 	log.info("[TASK][UPDATE][{}] User is authorized to update task with identifier {}", loggedUser,
 		taskIdentifier);
@@ -200,7 +218,7 @@ public class TaskServiceImpl implements TaskService {
 
         if (!task.getAssignedTo().getIdentifier().equals(user.getIdentifier())) {
             log.warn("[TASK][DELETE][{}] User is not authorized to delete task with identifier {}", loggedUser, taskIdentifier);
-            throw new ForbiddenException();
+            throw new ForbiddenException("Delete task with identifier: " + taskIdentifier);
         }
         log.info("[TASK][DELETE][{}] User is authorized to delete task with identifier {}", loggedUser, taskIdentifier);
 
@@ -229,7 +247,7 @@ public class TaskServiceImpl implements TaskService {
 
 	if(!task.getAssignedTo().getIdentifier().equals(user.getIdentifier())) {
 	    log.warn("[TASK][GET][{}] User is not authorized to get task with identifier {}", loggedUser, identifier);
-	    throw new ForbiddenException();
+	    throw new ForbiddenException("Get task with identifier: " + identifier);
 	}
 	
 	log.info("[TASK][GET][{}] Successfully retrieved task with identifier: {}", loggedUser, identifier);
@@ -254,14 +272,14 @@ public class TaskServiceImpl implements TaskService {
 		});
 
 	if (taskDTO.status() == null) {
-	    throw new TaskMissingCreateParameters("status");
+	    throw new TaskMissingCreateParameters("[status]");
 	}
 	
 	log.info("[TASK][UPDATE][STATUS][{}] Task found with identifier: {}", loggedUser, task.getIdentifier());
 
 	if (!task.getAssignedTo().getIdentifier().equals(user.getIdentifier())) {
 	    log.warn("[TASK][UPDATE][STATUS][{}] User is not authorized to update task with identifier {}", loggedUser, identifier);
-	    throw new ForbiddenException();
+	    throw new ForbiddenException("Update task with identifier: " + identifier);
 	}
 	
 	log.info("[TASK][UPDATE][STATUS][{}] Updating task with new status: status={}", loggedUser, task.getStatus());

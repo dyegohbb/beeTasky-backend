@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 	
 	if (userRepository.existsByUsernameOrEmail(username, email)) {
 	    log.warn("[USER][CREATE] User creation for user with details: username={}, email={} - Duplicated username or email", username, email);
-	    throw new DuplicatedUserException(username, email);
+	    throw new DuplicatedUserException();
 	}
 	
 	log.info("[USER][CREATE] User with details: username={}, email={} is unique, proceeding with creation", username, email);
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 	
 	if(!requiredFieldsMissing.isEmpty()) {
 	    log.info("[USER][CREATE] User creation failed - Missing required parameters: {}", requiredFieldsMissing);
-	    throw new UserMissingCreateParameters(requiredFieldsMissing);
+	    throw new UserMissingCreateParameters(requiredFieldsMissing.toString());
 	}	
     }
 
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
         if (userRequest.password() != null && !userRequest.password().isBlank()) {
             if (!passwordEncoder.matches(userRequest.currentPassword(), user.getPassword())) {
                 log.warn("[USER][UPDATE][{}] User attempted to change password with incorrect current password.", loggedUsername);
-                throw new ForbiddenException();
+                throw new ForbiddenException("Update user with identifier: " + user.getIdentifier());
             }
 
             user.setPassword(passwordEncoder.encode(userRequest.password()));
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
         if (!loggedUser.getIdentifier().equals(identifier)) {
             log.warn("[USER][DELETE][{}] User is not authorized to delete user with identifier {}.", loggedUsername, identifier);
-            throw new ForbiddenException();
+            throw new ForbiddenException("Delete user with identifier: " + identifier);
         }
 
         log.info("[USER][DELETE][{}] Deleting user with identifier {}.", loggedUsername, identifier);

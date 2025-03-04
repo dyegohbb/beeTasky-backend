@@ -31,14 +31,29 @@ public class TaskSpecification {
 		predicates.add(cb.equal(root.get("status"), filter.status()));
 	    }
 
-	    if (filter.createdOn() != null) {
-		predicates.add(cb.equal(root.get("createdOn"), filter.createdOn()));
+	    if (filter.createdOnStartDate() != null && filter.createdOnEndDate() != null) {
+		predicates
+			.add(cb.between(root.get("createdOn"), filter.createdOnStartDate(), filter.createdOnEndDate()));
+	    } else if (filter.createdOnStartDate() != null) {
+		predicates.add(cb.greaterThanOrEqualTo(root.get("createdOn"), filter.createdOnStartDate()));
+	    } else if (filter.createdOnEndDate() != null) {
+		predicates.add(cb.lessThanOrEqualTo(root.get("createdOn"), filter.createdOnEndDate()));
+	    }
+
+	    if (filter.deadlineStartDate() != null && filter.deadlineEndDate() != null) {
+		predicates.add(cb.between(root.get("deadline"), filter.deadlineStartDate(), filter.deadlineEndDate()));
+	    } else if (filter.deadlineStartDate() != null) {
+		predicates.add(cb.greaterThanOrEqualTo(root.get("deadline"), filter.deadlineStartDate()));
+	    } else if (filter.deadlineEndDate() != null) {
+		predicates.add(cb.lessThanOrEqualTo(root.get("deadline"), filter.deadlineEndDate()));
 	    }
 
 	    predicates.add(cb.equal(root.get("deleted"), false));
+
 	    predicates.add(cb.equal(root.get("assignedTo").get("identifier"), userIdentifier));
 
 	    return cb.and(predicates.toArray(new Predicate[0]));
 	};
     }
+
 }
