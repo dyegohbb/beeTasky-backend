@@ -23,6 +23,7 @@ import br.beehome.beetasky.dto.core.ApiResponse;
 import br.beehome.beetasky.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 
 @RestController
 @RequestMapping("/tasks")
@@ -33,7 +34,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TaskDTO>>> listAll(@ModelAttribute TaskFilterDTO filter, Authentication authentication, Pageable pageable) {
+    public ResponseEntity<ApiResponse<List<TaskDTO>>> listAll(@ParameterObject @ModelAttribute TaskFilterDTO filter, @ParameterObject Pageable pageable, Authentication authentication) {
 	ApiResponse<List<TaskDTO>> tasks = taskService.listAllTasksByUser(authentication.getName(), filter, pageable);
 	return new ResponseEntity<>(tasks, tasks.getStatus());
     }
