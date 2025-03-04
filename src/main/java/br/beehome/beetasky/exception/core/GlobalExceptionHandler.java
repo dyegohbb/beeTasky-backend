@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import br.beehome.beetasky.adapter.ApiResponseAdapter;
 import br.beehome.beetasky.dto.core.ApiResponse;
-import br.beehome.beetasky.exception.ExceptionMessageKeyEnum;
 import lombok.RequiredArgsConstructor;
 
 @ControllerAdvice
@@ -16,8 +15,15 @@ public class GlobalExceptionHandler {
 
     private final ApiResponseAdapter apiResponseAdapter;
     
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException customException) {
+	
+	ApiResponse<Void> error = apiResponseAdapter.toError(customException.getMessageKeyEnum(), customException.getStatus());
+        return new ResponseEntity<>(error, error.getStatus());
+    }
+    
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception exception) {
 	ApiResponse<Void> error = apiResponseAdapter.toError(ExceptionMessageKeyEnum.GENERIC_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(error, error.getStatus());
     }

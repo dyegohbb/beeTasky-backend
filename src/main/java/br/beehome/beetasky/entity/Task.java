@@ -37,10 +37,10 @@ public class Task {
     @Column(name = "identifier", nullable = false, unique = true)
     private String identifier;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = true)
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -60,10 +60,10 @@ public class Task {
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
 
-    @Column(name = "deleted_on")
+    @Column(name = "deleted_on", nullable = true)
     private LocalDateTime deletedOn;
 
-    @Column(name = "updated_on")
+    @Column(name = "updated_on", nullable = true)
     private LocalDateTime updatedOn;
 
     @PrePersist

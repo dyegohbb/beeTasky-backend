@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import br.beehome.beetasky.common.MessageKeyEnum;
 import br.beehome.beetasky.dto.core.ApiResponse;
-import br.beehome.beetasky.exception.ExceptionMessageKeyEnum;
+import br.beehome.beetasky.exception.core.ExceptionMessageKeyEnum;
 
 @Component
 public class ApiResponseAdapter {

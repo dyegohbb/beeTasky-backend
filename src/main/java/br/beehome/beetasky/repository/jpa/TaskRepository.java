@@ -17,4 +17,9 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
     Optional<Task> findByTaskIdentifierAndUserIdentifier(@Param("taskIdentifier") String taskIdentifier,
 	    @Param("userIdentifier") String userIdentifier);
 
+    boolean existsByTitle(String title);
+    
+    @Query("SELECT t FROM Task t WHERE t.identifier = :identifier AND t.deleted = false")
+    Optional<Task> findByIdentifier(@Param("identifier") String identifier);
+
 }

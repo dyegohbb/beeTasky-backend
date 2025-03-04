@@ -35,7 +35,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(@PathVariable String identifier,
 	    @RequestBody UserUpdateRequest userRequest, Authentication authentication) {
 
-	ApiResponse<UserDTO> response = userService.updateUser(authentication.getName(), userRequest);
+	ApiResponse<UserDTO> response = userService.updateUser(authentication.getName(), userRequest, identifier);
 
 	return new ResponseEntity<>(response, response.getStatus());
     }

@@ -10,7 +10,7 @@ public interface UserService {
     
     public ApiResponse<UserDTO> createUser(UserCreateRequest userRequest);
 
-    public ApiResponse<UserDTO> updateUser(String username, UserUpdateRequest userRequest);
+    public ApiResponse<UserDTO> updateUser(String username, UserUpdateRequest userRequest, String identifier);
 
     public ApiResponse<Void> deleteUserByIdentifier(String username, String identifier);
 

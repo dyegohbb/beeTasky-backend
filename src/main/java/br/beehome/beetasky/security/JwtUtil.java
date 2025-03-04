@@ -42,7 +42,7 @@ public class JwtUtil {
 		.expiresAt(expiresAt)
 		.token(token).build();
 	
-	return apiResponseAdapter.toSuccess(tokenDTO, MessageKeyEnum.SUCCESS, HttpStatus.OK);
+	return apiResponseAdapter.toSuccess(tokenDTO, MessageKeyEnum.TOKEN_GENERATED, HttpStatus.OK);
     }
 
     public String validateToken(String token) {

@@ -3,6 +3,7 @@ package br.beehome.beetasky.exception;
 import org.springframework.http.HttpStatus;
 
 import br.beehome.beetasky.exception.core.CustomException;
+import br.beehome.beetasky.exception.core.ExceptionMessageKeyEnum;
 
 public class UserNotFoundException extends CustomException {
 

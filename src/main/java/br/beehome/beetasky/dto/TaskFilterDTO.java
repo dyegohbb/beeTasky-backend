@@ -8,4 +8,16 @@ public record TaskFilterDTO(
 	String taskIdentifier, 
 	String title, 
 	TaskStatusEnum status, 
-	LocalDateTime createdOn) {}
+	LocalDateTime createdOn) {
+    
+    @Override
+    public String toString() {
+        return "TaskFilterDTO{" +
+               "taskIdentifier=" + taskIdentifier +
+               ", title=" + title +
+               ", status=" + status +
+               ", createdOn=" + createdOn +
+               '}';
+    }
+    
+}

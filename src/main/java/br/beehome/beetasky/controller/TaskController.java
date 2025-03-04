@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,13 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.beehome.beetasky.dto.TaskDTO;
 import br.beehome.beetasky.dto.TaskFilterDTO;
+import br.beehome.beetasky.dto.TaskUpdateStatusDTO;
 import br.beehome.beetasky.dto.core.ApiResponse;
 import br.beehome.beetasky.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/tasks")
 @RequiredArgsConstructor
 @Slf4j
 public class TaskController {
@@ -34,6 +36,12 @@ public class TaskController {
     public ResponseEntity<ApiResponse<List<TaskDTO>>> listAll(@ModelAttribute TaskFilterDTO filter, Authentication authentication, Pageable pageable) {
 	ApiResponse<List<TaskDTO>> tasks = taskService.listAllTasksByUser(authentication.getName(), filter, pageable);
 	return new ResponseEntity<>(tasks, tasks.getStatus());
+    }
+    
+    @GetMapping("/{identifier}")
+    public ResponseEntity<ApiResponse<TaskDTO>> getTask(@PathVariable String identifier, Authentication authentication) {
+	ApiResponse<TaskDTO> task = taskService.getTaskByIdentifier(authentication.getName(), identifier);
+	return new ResponseEntity<>(task, task.getStatus());
     }
     
     @PostMapping
@@ -60,5 +68,13 @@ public class TaskController {
         ApiResponse<Void> response = taskService.deleteTaskByIdentifier(authentication.getName(), identifier);
 
         return new ResponseEntity<>(response, response.getStatus());
+    }
+    
+    @PatchMapping("/{identifier}")
+    public ResponseEntity<ApiResponse<TaskDTO>> updateTaskStatus(@PathVariable String identifier,
+	    @RequestBody TaskUpdateStatusDTO taskDTO, Authentication authentication) {
+
+	ApiResponse<TaskDTO> response = taskService.updateTaskStatus(authentication.getName(), identifier, taskDTO);
+	return new ResponseEntity<>(response, response.getStatus());
     }
 }
