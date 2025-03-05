@@ -61,8 +61,15 @@ public class TaskServiceImpl implements TaskService {
 
         log.info("[TASK][LIST][{}] Querying tasks for page {}, page size {} and filter: {}", loggedUser, pageable.getPageNumber(), pageable.getPageSize(), taskFilter);
         
-        Page<Task> taskPage = taskRepository.findAll(specificationFilter, pageable);
-        List<TaskDTO> tasks = taskPage.stream().map(taskAdapter::toDTO).toList();
+	Page<Task> taskPage = taskRepository.findAll(specificationFilter, pageable);
+	List<TaskDTO> tasks = taskPage.stream().map(taskAdapter::toDTO).peek(task -> {
+	    if (task.getCreatedOn() != null) {
+		task.setCreatedOn(task.getCreatedOn().withNano(0));
+	    }
+	    if (task.getDeadline() != null) {
+		task.setDeadline(task.getDeadline().withNano(0));
+	    }
+	}).toList();
 
         if (tasks.isEmpty()) {
             log.info("[TASK][LIST][{}] No tasks found for user on page {}, page size {} and filter: {}", loggedUser, pageable.getPageNumber(), taskFilter);
