@@ -24,7 +24,7 @@ public class TaskSpecification {
 	    }
 
 	    if (isNotBlank(filter.title())) {
-		predicates.add(cb.like(root.get("title"), "%" + filter.title() + "%"));
+		predicates.add(cb.like(cb.lower(root.get("title")), "%" + filter.title().toLowerCase() + "%"));
 	    }
 
 	    if (filter.status() != null) {

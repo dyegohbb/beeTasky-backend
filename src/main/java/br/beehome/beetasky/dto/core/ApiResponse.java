@@ -25,6 +25,9 @@ public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String errorCode;
     private LocalDateTime timestamp;
+    
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean hasNextPage;
 
     @JsonIgnore
     private HttpStatus status;

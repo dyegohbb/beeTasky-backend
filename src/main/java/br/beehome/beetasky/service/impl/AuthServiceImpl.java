@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import br.beehome.beetasky.dto.AuthRequest;
 import br.beehome.beetasky.dto.TokenDTO;
 import br.beehome.beetasky.dto.core.ApiResponse;
-import br.beehome.beetasky.exception.UnauthorizedException;
+import br.beehome.beetasky.exception.UnauthorizedLoginException;
 import br.beehome.beetasky.exception.UserMissingAuthParameters;
 import br.beehome.beetasky.security.JwtUtil;
 import br.beehome.beetasky.service.AuthService;
@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ApiResponse<TokenDTO> authenticate(AuthRequest authRequest) {
-	String usernameOrEmail = authRequest.getUsernameOrEmail();
+	String usernameOrEmail = authRequest.login();
 	validateAuthRequest(authRequest);
 	log.info("[AUTH][{}] Auth request validated", usernameOrEmail);
 	log.info("[AUTH][{}] Authentication started", usernameOrEmail);
@@ -46,15 +46,16 @@ public class AuthServiceImpl implements AuthService {
 	    return token;
 	} catch (Exception e) {
 	    log.warn("[AUTH][{}] Authentication failed", usernameOrEmail, e);
-	    throw new UnauthorizedException();
+	    throw new UnauthorizedLoginException();
 	}
     }
 
     private void validateAuthRequest(AuthRequest authRequest) {
-	boolean isUsernameOrEmailBlank = StringUtils.isBlank(authRequest.getUsernameOrEmail());
+	String usernameOrEmail = authRequest.login();
+	boolean isUsernameOrEmailBlank = StringUtils.isBlank(usernameOrEmail);
 	if (isUsernameOrEmailBlank || StringUtils.isBlank(authRequest.password())) {
 	    log.warn("[AUTH][{}] Missing user auth parameters",
-		    isUsernameOrEmailBlank ? "UNKNOWN" : authRequest.getUsernameOrEmail());
+		    isUsernameOrEmailBlank ? "UNKNOWN" : usernameOrEmail);
 	    throw new UserMissingAuthParameters();
 	}
     }

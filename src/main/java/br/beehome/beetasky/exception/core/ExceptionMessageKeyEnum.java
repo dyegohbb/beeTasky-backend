@@ -11,7 +11,7 @@ public enum ExceptionMessageKeyEnum {
     TASK_NOT_FOUND("task.not_found.error"),
     DUPLICATED_TASK_TITLE("task.duplicated_title.error"),
     USER_NOT_FOUND("user.not_found.error"),
-    UNAUTHORIZED("unauthorized.error"), 
+    UNAUTHORIZED_LOGIN("auth.unauthorized.error"), 
     FORBIDDEN("forbidden.error"),
     DUPLICATED_USERNAME_EMAIL("user.duplicated_username_or_email.error"),
     USER_MISSING_AUTH_PARAMETERS("user.missing_auth_parameters.error"),

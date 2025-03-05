@@ -1,4 +1,4 @@
-package br.beehome.beetasky.config.swagger;
+package br.beehome.beetasky.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

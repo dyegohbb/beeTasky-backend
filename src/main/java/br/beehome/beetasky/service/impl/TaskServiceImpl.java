@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -48,10 +49,10 @@ public class TaskServiceImpl implements TaskService {
     public ApiResponse<List<TaskDTO>> listAllTasksByUser(String loggedUser, TaskFilterDTO taskFilter,
             Pageable pageable) {
 
-	validateTaskFilter(taskFilter);
-	
+        validateTaskFilter(taskFilter);
+
         log.info("[TASK][LIST][{}] Listing tasks for user with filter: {}", loggedUser, taskFilter);
-        
+
         log.info("[TASK][LIST][{}] Retrieving user for list tasks with filter: {}", loggedUser, taskFilter);
         User user = userService.getUserByUsernameOrEmail(loggedUser);
 
@@ -59,8 +60,9 @@ public class TaskServiceImpl implements TaskService {
         final Specification<Task> specificationFilter = taskSpecification.filter(taskFilter, user.getIdentifier());
 
         log.info("[TASK][LIST][{}] Querying tasks for page {}, page size {} and filter: {}", loggedUser, pageable.getPageNumber(), pageable.getPageSize(), taskFilter);
-        List<TaskDTO> tasks = taskRepository.findAll(specificationFilter, pageable).stream()
-                .map(taskAdapter::toDTO).toList();
+        
+        Page<Task> taskPage = taskRepository.findAll(specificationFilter, pageable);
+        List<TaskDTO> tasks = taskPage.stream().map(taskAdapter::toDTO).toList();
 
         if (tasks.isEmpty()) {
             log.info("[TASK][LIST][{}] No tasks found for user on page {}, page size {} and filter: {}", loggedUser, pageable.getPageNumber(), taskFilter);
@@ -68,8 +70,11 @@ public class TaskServiceImpl implements TaskService {
             log.info("[TASK][LIST][{}] Successfully retrieved {} tasks on page {}, page size {} and filter: {}", loggedUser, tasks.size(), pageable.getPageNumber(), taskFilter);
         }
 
-        return responseAdapter.toSuccess(tasks, MessageKeyEnum.TASK_LISTED, 
+        ApiResponse<List<TaskDTO>> success = responseAdapter.toSuccess(tasks, MessageKeyEnum.TASK_LISTED, 
                 tasks.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
+
+        success.setHasNextPage(taskPage.hasNext());
+        return success;
     }
 
     private void validateTaskFilter(TaskFilterDTO taskFilter) {
