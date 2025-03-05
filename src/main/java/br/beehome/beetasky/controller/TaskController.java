@@ -70,12 +70,4 @@ public class TaskController {
 
         return new ResponseEntity<>(response, response.getStatus());
     }
-    
-    @PatchMapping("/{identifier}")
-    public ResponseEntity<ApiResponse<TaskDTO>> updateTaskStatus(@PathVariable String identifier,
-	    @RequestBody TaskUpdateStatusDTO taskDTO, Authentication authentication) {
-
-	ApiResponse<TaskDTO> response = taskService.updateTaskStatus(authentication.getName(), identifier, taskDTO);
-	return new ResponseEntity<>(response, response.getStatus());
-    }
 }

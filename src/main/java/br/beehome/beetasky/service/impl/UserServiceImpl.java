@@ -90,12 +90,32 @@ public class UserServiceImpl implements UserService {
     public ApiResponse<UserDTO> updateUser(String loggedUsername, UserUpdateRequest userRequest, String identifier) {
         log.info("[USER][UPDATE][{}] Starting update process for user with identifier: {}", loggedUsername, identifier);
 
+        User loggedUser = userRepository.findByUsernameOrEmail(loggedUsername).orElseThrow(() -> {
+            log.error("[USER][UPDATE][{}] User with identifier {} not found", loggedUsername,
+        	    identifier);
+            throw new UserNotFoundException(identifier);
+        });
+        
         log.info("[USER][UPDATE][{}] Retrieving logged user to update user", loggedUsername);
         User user = userRepository.findByIdentifier(identifier).orElseThrow(() -> {
             log.error("[USER][UPDATE][{}] User with identifier {} not found", loggedUsername,
         	    identifier);
             throw new UserNotFoundException(identifier);
         });
+        
+        if (!loggedUser.getIdentifier().equals(identifier)) {
+            log.warn("[USER][UPDATE][{}] User is not authorized to update user with identifier {}.", loggedUsername, identifier);
+            throw new ForbiddenException("Update user with identifier: " + identifier);
+        }
+        
+	if (userRepository.existsByUsernameOrEmailAndIdentifierNot(userRequest.username(), userRequest.email(),
+		identifier)) {
+	    log.warn(
+		    "[USER][UPDATE] User update for user with details: username={}, email={} - Duplicated username or email",
+		    user.getUsername(), user.getEmail());
+	    throw new DuplicatedUserException();
+	}
+        
         updateUserFields(loggedUsername, user, userRequest);
         
         log.info("[USER][UPDATE][{}] Updating user information with new values.", loggedUsername);
