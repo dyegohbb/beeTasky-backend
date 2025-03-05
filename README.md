@@ -68,7 +68,7 @@ A API do BeeTasky está configurada para responder em dois idiomas (pt-br e en) 
 A API do BeeTasky segue o padrão RESTful e está documentada com Swagger. Acesse a documentação em: http://localhost:8080/swagger-ui.html.
 Também está disponibilizado em código a coleção do Postman para facilitar as consultas, PATH: `/resources/api`
 
-### Listagem de cURLs disponíveis para uso:
+### Listagem de cURLs disponíveis para uso
 
 #### POST /user: Criação de usuário
 
@@ -167,3 +167,11 @@ O cURL abaixo mostra a request com a maior quantidade de parametros possíveis, 
 curl --location 'http://127.0.0.1:8080/tasks?taskIdentifier=TASK123&title=Minha%20Tarefa&status=IN_PROGRESS&createdOnStartDate=2024-03-01T00%3A00%3A00&createdOnEndDate=2024-03-05T23%3A59%3A59&deadlineStartDate=2024-03-10T00%3A00%3A00&deadlineEndDate=2024-03-15T23%3A59%3A59&page=0&size=10&sort=title%2Casc' \
 --header 'Authorization: Bearer ****'
 ```
+
+### Melhorias futuras:
+- Refinamento na deleção lógica e na regra das entidades em si
+- Criação de ROLES e autorizações
+- Permitir tasks sem assign_to preenchidos para o usuário ir e escolher qual assinar
+- Ajustes na regra de listagem de tasks para exibir as tasks disponíveis (sem atribuição)
+- Permitir edição, deleção de usuários e tasks por usuários administradores
+- Adição de espanhol no i18n
